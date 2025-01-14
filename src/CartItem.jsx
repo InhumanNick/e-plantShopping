@@ -7,30 +7,51 @@ const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
 
-  // Calculate total amount for all products in the cart
-  const calculateTotalAmount = () => {
- 
+  // Calculate total amount for all products in the cart (used code from Ask Tai as reference)
+  const calculateTotalAmount = (cartItems) => {
+     return cartItems.reduce((total, item) => {
+        return total + (item.quantity * item.cost);
+     }, 0);
   };
 
   const handleContinueShopping = (e) => {
-   
+     onContinueShopping(e);
   };
 
-
-
+  const handleCheckoutShopping = (e) => {
+    alert('Functionality to be added for future reference');
+  };
   const handleIncrement = (item) => {
+    const newQuantity = item.quantity + 1;
+    updateQuantity({ ...item, quantity: newQuantity });
+    updateCart();
+  };
   };
 
   const handleDecrement = (item) => {
-   
+    const newQuantity = Math.max(item.quantity - 1, 0);
+    updateQuantity({ ...item, quantity: newQuantity });
+    updateCart();
   };
 
   const handleRemove = (item) => {
+    removeItem(item.id);
+    updateCart();
+  };
+  const [totalQuantity, setTotalQuantity] = useState(0);
+
+  const updateCart = () => {
+    const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totalCost = cartItems.reduce((sum, item) => sum + calculateTotalCost(item), 0);
+    updateCartIcon(totalQuantity);
+    updateTotalCost(totalCost);
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
-  };
+       return(item.quantity * item.cost);
+     };
+     
 
   return (
     <div className="cart-container">
@@ -47,6 +68,9 @@ const CartItem = ({ onContinueShopping }) => {
                 <span className="cart-item-quantity-value">{item.quantity}</span>
                 <button className="cart-item-button cart-item-button-inc" onClick={() => handleIncrement(item)}>+</button>
               </div>
+              <div className="cart-number">
+                <span>{totalQuantity}</span>
+              </div>
               <div className="cart-item-total">Total: ${calculateTotalCost(item)}</div>
               <button className="cart-item-delete" onClick={() => handleRemove(item)}>Delete</button>
             </div>
@@ -61,7 +85,6 @@ const CartItem = ({ onContinueShopping }) => {
       </div>
     </div>
   );
-};
 
 export default CartItem;
 
